@@ -20,7 +20,7 @@ constexpr int32_t g_base_month = 1;
 constexpr int32_t g_base_year  = 1900;
 constexpr time_t g_day_unit    = 24 * 60 * 60;
 
-std::vector<tm> date_range(const std::string& start_date, uint32_t length) {
+std::vector<tm> date_range(const std::string& start_date, uint32_t period) {
     std::vector<tm> temp_vec;
 
     // init tm sturct(important!!!)
@@ -30,7 +30,7 @@ std::vector<tm> date_range(const std::string& start_date, uint32_t length) {
     strptime(start_date.c_str(), "%Y-%m-%d %Y%m%d %Y/%m/%d", &time_info);
     time_t start_time = mktime(&time_info);
 
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < period; i++) {
         start_time += g_day_unit;
         temp_info = *localtime(&start_time);
         temp_vec.push_back(temp_info);
@@ -51,7 +51,7 @@ void create_toy_data(int32_t companies,
     std::stringstream file_ss, date_ss;
 
     // create date range
-    date_vec = date_range(start_date, date_n);
+    date_vec = date_range(start_date, /*period=*/date_n);
 
     for (int32_t i = 1; i <= companies; i++) {
         // auto fill 0 brefor instrument id, like "000001.XSHE"
@@ -60,6 +60,11 @@ void create_toy_data(int32_t companies,
 
         // create output file
         file = out_dir + "/" + file_ss.str();
+        
+        // clear cache
+        file_ss.clear();
+        file_ss.str("");
+        
         fp.open(file);
 
         if (!fp.is_open()) {
@@ -93,9 +98,6 @@ void create_toy_data(int32_t companies,
             date_ss.str("");
         }
 
-        // clear cache
-        file_ss.clear();
-        file_ss.str("");
         fp.close();
     }
 }

@@ -30,11 +30,10 @@ std::vector<T> randn(T low, T high, T length, uint_fast32_t seed = 0U) {
 
     // default rnd seed
     if (seed == 0U) {
-        auto now = steady_clock::now();
-        auto now_int
-            = duration_cast<nanoseconds>(now.time_since_epoch()).count();
-        seed = static_cast<uint32_t>(now_int);
-        // might generate same output
+        auto now     = steady_clock::now();
+        auto now_int = duration_cast<nanoseconds>(now.time_since_epoch()).count();
+        seed         = static_cast<uint32_t>(now_int);
+        // might generate same value in same second
         // seed       = time(nullptr);
     }
 
@@ -53,6 +52,12 @@ std::vector<T> randn(T low, T high, T length, uint_fast32_t seed = 0U) {
  * @brief accept double or float numbers as input, note if we call function at same second,
  *        the first number is always same, because default seed is not changed.
  *
+ * @tparam T float or double
+ * @param low lowest bound value
+ * @param high highest bound value
+ * @param length random array length
+ * @param seed random seed for linear congruential generator
+ * @return std::vector<T>
  */
 template <typename T>
 std::vector<T> rand(T low, T high, T length, uint_fast32_t seed = 0U) {
@@ -60,10 +65,9 @@ std::vector<T> rand(T low, T high, T length, uint_fast32_t seed = 0U) {
 
     // default rnd seed
     if (seed == 0) {
-        auto now = steady_clock::now();
-        auto now_int
-            = duration_cast<nanoseconds>(now.time_since_epoch()).count();
-        seed = static_cast<uint32_t>(now_int);
+        auto now     = steady_clock::now();
+        auto now_int = duration_cast<nanoseconds>(now.time_since_epoch()).count();
+        seed         = static_cast<uint32_t>(now_int);
         // might generate same output
         // seed = time(nullptr);
     }
@@ -82,18 +86,18 @@ std::vector<T> rand(T low, T high, T length, uint_fast32_t seed = 0U) {
 /**
  * @brief generate date range
  *
- * @param start_date
- * @param length
+ * @param start_date date to start
+ * @param period date period
  * @return std::vector<tm>
  */
-std::vector<tm> date_range(const std::string& start_date, uint32_t length);
+std::vector<tm> date_range(const std::string& start_date, uint32_t period);
 
 /**
  * @brief Create a toy data object
  *
  * @param companies csv file numbers
  * @param start_date toy data start date
- * @param date_n day range length
+ * @param date_n day range length, it decides date period
  * @param out_dir output directory
  * @param seed random seed
  */
